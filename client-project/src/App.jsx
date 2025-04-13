@@ -1,5 +1,5 @@
 // App.js or Routes.js
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route , Navigate} from "react-router-dom";
 import Login from "./component/Login/Login";
 import Signup from "./component/Signup/Signup";
 import Dashboard from "./component/Dashboard/Dashboard";
