@@ -1,0 +1,38 @@
+.user-details-container {
+    height: 87vh;
+    width: 100%;
+    background: linear-gradient(to right, #8360c3, #2ebf91);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    .card {
+      background-color: #fff;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      min-width: 350px;
+      text-align: center;
+  
+      h2 {
+        margin-bottom: 1.5rem;
+        color: #333;
+        font-size: 1.8rem;
+      }
+  
+      .info {
+        text-align: left;
+  
+        p {
+          font-size: 1rem;
+          margin: 0.75rem 0;
+          color: #555;
+  
+          strong {
+            color: #222;
+          }
+        }
+      }
+    }
+  }
+  
