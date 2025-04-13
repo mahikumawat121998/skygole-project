@@ -30,7 +30,10 @@ const userRegister = async (req, res) => {
     const saltRounds = 10;
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
-    const htmlEmailTemplate = getEmailTemplate(username, otp);
+    const htmlEmailTemplate = getEmailTemplate(
+      `${firstName}{" "}${lastName}`,
+      otp
+    );
     await sendEmail(email, "Verify Your OTP Code", htmlEmailTemplate);
 
     const tempUser = new Otp({
@@ -132,6 +135,7 @@ const otpResend = async (req, res) => {
     const istOffsetMs = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
     const expiresAt = new Date(Date.now() + 1 * 60 * 1000 + istOffsetMs);
     const result = await Otp.updateOne({ email }, { $set: { otp, expiresAt } });
+    const findResult = await Otp.findOne({ email });
     console.log("🚀 ~ otpResend ~ result:", result);
 
     if (result.modifiedCount === 0) {
@@ -139,6 +143,11 @@ const otpResend = async (req, res) => {
         .status(404)
         .json({ message: "User not found or OTP not updated" });
     }
+    const htmlEmailTemplate = getEmailTemplate(
+      `${findResult.firstName}{" "}${findResult.lastName}`,
+      otp
+    );
+    await sendEmail(email, "Verify Your OTP Code", htmlEmailTemplate);
     return res.status(201).json({
       status: responseMessages.STATUS.CREATED,
       data: { otp },
@@ -160,12 +169,10 @@ const userLogin = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(401)
-        .json({
-          message: responseMessages.ERROR.INVALID_CREDENTIALS,
-          status: 401,
-        });
+      return res.status(401).json({
+        message: responseMessages.ERROR.INVALID_CREDENTIALS,
+        status: 401,
+      });
     }
     // Check if account is locked
     if (user.lockUntil && user.lockUntil > currentTime) {
@@ -186,15 +193,13 @@ const userLogin = async (req, res) => {
         };
       }
       await User.updateOne({ email }, updates);
-      return res
-        .status(400)
-        .json({
-          status: 400,
-          message:
-            user.failedAttempts + 1 >= 3
-              ? `${responseMessages.ERROR.TOO_MANY_ATTEMPTS}`
-              : `${responseMessages.ERROR.INVALID_CREDENTIALS}`,
-        });
+      return res.status(400).json({
+        status: 400,
+        message:
+          user.failedAttempts + 1 >= 3
+            ? `${responseMessages.ERROR.TOO_MANY_ATTEMPTS}`
+            : `${responseMessages.ERROR.INVALID_CREDENTIALS}`,
+      });
     }
 
     // Generate tokens
@@ -268,10 +273,7 @@ const userResetPassword = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await User.updateOne(
-      { username },
-      { $set: { password: hashedPassword } }
-    );
+    await User.updateOne({ username }, { $set: { password: hashedPassword } });
 
     return res.status(200).json({
       status: responseMessages.STATUS.OK,
@@ -280,12 +282,12 @@ const userResetPassword = async (req, res) => {
     });
   } catch (error) {
     return res.status(responseMessages.STATUS.SERVER_ERROR || 500).json({
-      message: responseMessages.ERROR.INTERNAL_SERVER || "Something went wrong.",
+      message:
+        responseMessages.ERROR.INTERNAL_SERVER || "Something went wrong.",
       error: error.message,
     });
   }
 };
-
 
 const getUserDetails = async (req, res) => {
   const { username } = req.user;
