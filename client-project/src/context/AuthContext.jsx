@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
 
 // Create context
 export const AuthContext = createContext();
