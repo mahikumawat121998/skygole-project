@@ -18,7 +18,7 @@ router.post("/registration", userRegister);
 router.post("/otp-verification", strictLimiter, otpVerification);
 router.patch("/resend-otp", otpResend);
 router.post("/login", strictLimiter, userLogin);
-router.patch("/reset-password/", verify, userResetPassword);
+router.patch("/reset-password", verify, userResetPassword);
 router.get("/", verify, getUserDetails);
 router.delete("/delete/:userId", verify, deleteUser);
 router.post("/refresh", refreshTokens);

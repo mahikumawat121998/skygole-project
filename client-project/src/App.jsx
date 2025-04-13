@@ -9,6 +9,7 @@ import { AuthProvider } from "./context/AuthContext";
 import VerifyOTP from "./component/VerifyOTP/VerifyOtp";
 
 import "./app.scss";
+import UpdatePassword from "./component/UpdatePassword/UpdatePassword";
 
 function App() {
   return (
@@ -31,6 +32,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-password"
+            element={
+              <ProtectedRoute>
+                <UpdatePassword />
               </ProtectedRoute>
             }
           />

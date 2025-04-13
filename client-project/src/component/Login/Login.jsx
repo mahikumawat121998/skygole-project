@@ -42,9 +42,9 @@ const Login = () => {
         <div className="left">
           <h1>Hello World.</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            SkyGoal Technologies is a next-generation IT solutions provider,
+            dedicated to empowering businesses with cutting-edge digital
+            transformation strategies.
           </p>
           <span>Don't you have an account?</span>
           <Link to="/signup">

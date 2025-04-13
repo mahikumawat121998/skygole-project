@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./signup.scss";
-import { toast } from 'react-toastify';
-
+import { toast } from "react-toastify";
+import { validateInputs } from "../../utils/validation";
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
@@ -15,13 +15,21 @@ const Signup = () => {
   });
   const [err, setErr] = useState(null);
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
   const username = String(`${Math.floor(Math.random() * 10000)}`);
   const handleClick = async (e) => {
     e.preventDefault();
+    const validationErrors = validateInputs(inputs);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return; // If errors exist, stop the form submission
+    }
 
     try {
       const response = await axios.post(
@@ -51,11 +59,14 @@ const Signup = () => {
     <div className="register">
       <div className="card">
         <div className="left">
-          <h1>SkyGole A Tech Gaint.</h1>
+          <h2>SkyGoal A Tech Gaint.</h2>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            SkyGoal Technologies is a next-generation IT solutions provider,
+            dedicated to empowering businesses with cutting-edge digital
+            transformation strategies. From innovative web and mobile
+            applications to cloud-based enterprise systems and advanced
+            cybersecurity solutions, we blend creativity, technology, and
+            business intelligence to deliver excellence.
           </p>
           <span>Do you have an account?</span>
           <Link to="/login">
@@ -71,6 +82,7 @@ const Signup = () => {
               name="firstName"
               onChange={handleChange}
             />
+            {errors.firstName && <p className="error">{errors.firstName}</p>}
 
             <input
               type="text"
@@ -78,6 +90,7 @@ const Signup = () => {
               name="lastName"
               onChange={handleChange}
             />
+            {errors.lastName && <p className="error">{errors.lastName}</p>}
 
             <input
               type="email"
@@ -85,20 +98,24 @@ const Signup = () => {
               name="email"
               onChange={handleChange}
             />
+            {errors.email && <p className="error">{errors.email}</p>}
+
             <input
               type="text"
-              placeholder="mobile"
+              placeholder="Mobile"
               name="mobile"
               onChange={handleChange}
             />
+            {errors.mobile && <p className="error">{errors.mobile}</p>}
+
             <input
               type="password"
               placeholder="Password"
               name="password"
               onChange={handleChange}
             />
+            {errors.password && <p className="error">{errors.password}</p>}
 
-            {err && err}
             <button onClick={handleClick}>Register</button>
           </form>
         </div>

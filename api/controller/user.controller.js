@@ -181,8 +181,7 @@ const userLogin = async (req, res) => {
       if (user.failedAttempts + 1 >= 3) {
         updates = {
           $set: {
-            // failedAttempts: 0,
-            lockUntil: new Date(currentTime + 3 * 60 * 60 * 1000), // 3 hours
+            lockUntil: new Date(currentTime.getTime() + 3 * 60 * 60 * 1000), // 3 hours
           },
         };
       }
@@ -231,36 +230,62 @@ const userLogin = async (req, res) => {
 };
 
 const userResetPassword = async (req, res) => {
-  const { newPassword } = req.body;
-  if (!newPassword || newPassword.length < 6) {
-    return res
-      .status(400)
-      .json({ message: "Password must be at least 6 characters long." });
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      message: "All fields are required.",
+    });
   }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({
+      message: "New password must be at least 6 characters long.",
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      message: "New password and confirm password do not match.",
+    });
+  }
+
   try {
-    const username = req.user.username; // accessToken should have email payload
+    const username = req.user.username; // Extracted from access token
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Current password is incorrect.",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const updated = await User.updateOne(
+    await User.updateOne(
       { username },
       { $set: { password: hashedPassword } }
     );
-    if (updated.modifiedCount === 0) {
-      return res
-        .status(404)
-        .json({ message: responseMessages.ERROR.USER_NOT_FOUND_OR_PASSWORD });
-    }
+
     return res.status(200).json({
       status: responseMessages.STATUS.OK,
       data: {},
       message: responseMessages.ERROR.PASSWORD_UPDATED,
     });
   } catch (error) {
-    return res.status(responseMessages.STATUS.SERVER_ERROR).json({
-      message: responseMessages.ERROR.INTERNAL_SERVER,
+    return res.status(responseMessages.STATUS.SERVER_ERROR || 500).json({
+      message: responseMessages.ERROR.INTERNAL_SERVER || "Something went wrong.",
       error: error.message,
     });
   }
 };
+
 
 const getUserDetails = async (req, res) => {
   const { username } = req.user;

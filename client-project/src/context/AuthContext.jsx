@@ -41,7 +41,9 @@ export const AuthProvider = ({ children }) => {
         return response.data;
       }
     } catch (err) {
-      toast.error(err?.message || "Login failed");
+      console.log("🚀 ~ login ~ err:", err)
+      
+      toast.error(err?.response?.data?.message || "Login failed");
       throw err; // 🔴 VERY IMPORTANT: rethrow the error
     }
   };
