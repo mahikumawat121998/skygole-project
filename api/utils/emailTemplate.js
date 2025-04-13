@@ -10,7 +10,7 @@ const getEmailTemplate = (name, otp) => `
         <div style="text-align: center; margin: 30px 0;">
           <span style="font-size: 28px; background-color: #f0f0f0; padding: 14px 28px; border-radius: 6px; display: inline-block; letter-spacing: 4px;">${otp}</span>
         </div>
-        <p style="font-size: 14px; color: #777;">Note: This OTP is valid for only 10 minutes.</p>
+        <p style="font-size: 14px; color: #777;">Note: This OTP is valid for only 1 minutes.</p>
         <br/>
         <p style="font-size: 16px;">Best Regards,</p>
         <p style="font-weight: bold; font-size: 16px;">Team Fast OTP</p>

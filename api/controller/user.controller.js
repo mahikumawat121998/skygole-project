@@ -31,7 +31,7 @@ const userRegister = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
     const htmlEmailTemplate = getEmailTemplate(
-      `${firstName}{" "}${lastName}`,
+      `${firstName} ${lastName}`,
       otp
     );
     await sendEmail(email, "Verify Your OTP Code", htmlEmailTemplate);
@@ -144,7 +144,7 @@ const otpResend = async (req, res) => {
         .json({ message: "User not found or OTP not updated" });
     }
     const htmlEmailTemplate = getEmailTemplate(
-      `${findResult.firstName}{" "}${findResult.lastName}`,
+      `${findResult.firstName} ${findResult.lastName}`,
       otp
     );
     await sendEmail(email, "Verify Your OTP Code", htmlEmailTemplate);
